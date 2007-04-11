@@ -44,10 +44,30 @@ var ScrollSearchEngines = {
         var searchbar = document.getElementById("searchbar");
         searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
 
-        var contextMenuItem = document.getElementById("context-searchselect");
-        contextMenuItem.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
+        if (window.MenuEdit) {
+            setTimeout(this.checkForMenuEdit, 1000);
+        } else {
+            this.addContextListener();
+        }
 
         this.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+    },
+
+
+    addContextListener : function() {
+        var contextMenuItem = document.getElementById("context-searchselect");
+        contextMenuItem.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
+    },
+
+    //Checks for the Menu Editor extension and loads our event listener
+    //after MenuEditor is initialized.
+    checkForMenuEdit : function() {
+
+        if (MenuEdit.loaded) {
+            ScrollSearchEngines.addContextListener();
+        } else {
+            setTimeout(ScrollSearchEngines.checkForMenuEdit, 1000);
+        }
     },
 
     scrollContextMenu : function(event) {
