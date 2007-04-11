@@ -39,71 +39,45 @@
 var ScrollSearchEngines = {
 
     searchService : null,
-    searchbar : null,
 
-    onLoad : function(event) {
-        var searchbars = document.getElementsByTagName("searchbar");
-        var searchbar;
+    onLoad : function(loadEvent) {
 
-        //Compatibility hack for Browster extension (browster.com) which annoyingly gives its searchbar
-        //an id of "searchbar" which is the same as the real searchbar.
-        for (var i = 0; i < searchbars.length; i++) {
-            searchbar = searchbars[i];
-
-            if (searchbar.id == "searchbar" && searchbar.parentNode &&
-                (searchbar.parentNode.id == "search-container" || searchbar.parentNode.id == "Browster-Search-Container")) {
-
-                //Need to do this instead of using BrowserSearch.getSearchbar because #$%#%&# Browster
-                //messes everything up!
-                if (searchbar.parentNode.id == "search-container") {
-                    this.searchbar = searchbar;
-                }
-
-                searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
+        document.addEventListener("DOMMouseScroll", function (scrollEvent) {
+            if (scrollEvent.target.id == "searchbar" && scrollEvent.target.selectEngine) {
+                ScrollSearchEngines.scroll(scrollEvent);
+            } else if (scrollEvent.target.id == "context-searchselect") {
+                ScrollSearchEngines.scrollContextMenu(scrollEvent);
             }
 
-        }
+        }, true);
 
-        //Compatibility hack for MenuEdit extension
-        if (window.MenuEdit) {
-            setTimeout(this.checkForMenuEdit, 1000);
-        } else {
-            this.addContextListener();
-        }
+        ScrollSearchEngines.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+    },
 
-        this.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+    scrollContextMenu : function(scrollEvent) {
+
+        ScrollSearchEngines.scroll(scrollEvent);
+        //This code mostly taken from the isTextSelection() function in browser.js
+        var selectedText = getBrowserSelection(16);
+        if (!selectedText)
+            return;
+
+        if (selectedText.length > 15)
+            selectedText = selectedText.substr(0,15) + "...";
+
+        var engineName = this.searchService.currentEngine.name;
+
+        // format "Search <engine> for <selection>" string to show in menu
+        scrollEvent.target.label = gNavigatorBundle.getFormattedString("contextMenuSearchText",
+                                                          [engineName,
+                                                           selectedText]);
     },
 
 
-    addContextListener : function() {
-        var contextMenuItem = document.getElementById("context-searchselect");
-        contextMenuItem.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
-    },
-
-    //Checks for the Menu Editor extension and loads our event listener
-    //after MenuEditor is initialized.
-    checkForMenuEdit : function() {
-
-        if (MenuEdit.loaded) {
-            ScrollSearchEngines.addContextListener();
-        } else {
-            setTimeout(ScrollSearchEngines.checkForMenuEdit, 1000);
-        }
-    },
-
-    scrollContextMenu : function(event) {
-
-        var oldName = this.searchService.currentEngine.name;
-        this.scroll(event);
-
-        var newName = this.searchService.currentEngine.name;
-        event.originalTarget.label = event.originalTarget.label.replace(oldName, newName);
-    },
-
-    scroll : function(event) {
-        this.searchbar.selectEngine(event, event.detail > 0);
+    scroll : function(scrollEvent) {
+        document.getElementById("searchbar").selectEngine(scrollEvent, scrollEvent.detail > 0);
     }
 
 };
 
-window.addEventListener("load", function(event) { ScrollSearchEngines.onLoad(event); }, false);
+window.addEventListener("load", ScrollSearchEngines.onLoad, false);

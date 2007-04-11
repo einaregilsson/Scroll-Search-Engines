@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
- xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-  <Description about="urn:mozilla:install-manifest">
-    <em:id>scrollsearchengines@einaregilsson.com</em:id>
-    <em:name>Scroll Search Engines</em:name>
-    <em:version>0.4.4</em:version>
-    <em:creator>Einar Egilsson</em:creator>
-    <em:description>Scrolls through search engines in the search bar</em:description>
-    <em:homepageURL>https://addons.mozilla.org/firefox/3696/</em:homepageURL>
-    <em:iconURL>chrome://scrollsearchengines/content/scrollsearchengines.png</em:iconURL>
-    <em:targetApplication>
-      <Description>
-        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->
-        <em:minVersion>2.0</em:minVersion>
-        <em:maxVersion>2.0.0.*</em:maxVersion>
-      </Description>
-    </em:targetApplication>
-  </Description>
-</RDF>
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:id="scrollsearchengines@einaregilsson.com"
+                   em:name="Scroll Search Engines"
+                   em:version="0.5"
+                   em:creator="Einar Egilsson"
+                   em:description="Scrolls through search engines in the search bar"
+                   em:homepageURL="https://addons.mozilla.org/addon/3696/"
+                   em:iconURL="chrome://scrollsearchengines/content/scrollsearchengines.png">
+    <em:targetApplication RDF:resource="rdf:#$Yrk2H"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="rdf:#$Yrk2H"
+                   em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                   em:minVersion="2.0"
+                   em:maxVersion="2.0.0.*" />
+</RDF:RDF>
