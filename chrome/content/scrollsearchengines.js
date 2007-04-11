@@ -41,9 +41,23 @@ var ScrollSearchEngines = {
     searchService : null,
 
     onLoad : function(event) {
-        var searchbar = document.getElementById("searchbar");
-        searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
+        var searchbars = document.getElementsByTagName("searchbar");
+        var searchbar;
 
+        //Compatibility hack for Browster extension (browster.com) which annoyingly gives its searchbar
+        //an id of "searchbar" which is the same as the real searchbar.
+        for (var i = 0; i < searchbars.length; i++) {
+            searchbar = searchbars[i];
+
+            if (searchbar.id == "searchbar" && searchbar.parentNode && 
+                (searchbar.parentNode.id == "search-container" || searchbar.parentNode.id == "Browster-Search-Container")) {
+
+                searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
+            }                
+
+        }
+
+        //Compatibility hack for MenuEdit extension
         if (window.MenuEdit) {
             setTimeout(this.checkForMenuEdit, 1000);
         } else {
