@@ -38,33 +38,31 @@
 
 var ScrollSearchEngines = {
 
- 	searchService : null,
- 	
- 	onLoad : function(event) {
-        var searchbar = document.getElementById('searchbar');
-        searchbar.addEventListener('DOMMouseScroll', function (e) { ScrollSearchEngines.scroll(e); }, false);
-        
-		var contextMenuItem = document.getElementById('context-searchselect');
-        contextMenuItem.addEventListener('DOMMouseScroll', function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
+    searchService : null,
 
-		this.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+    onLoad : function(event) {
+        var searchbar = document.getElementById("searchbar");
+        searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
+
+        var contextMenuItem = document.getElementById("context-searchselect");
+        contextMenuItem.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
+
+        this.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
     },
 
-	scrollContextMenu : function(event) {
+    scrollContextMenu : function(event) {
 
-    	var oldName = this.searchService.currentEngine.name;
-    	this.scroll(event);
+        var oldName = this.searchService.currentEngine.name;
+        this.scroll(event);
 
-		var newName = this.searchService.currentEngine.name;
-		event.originalTarget.label = event.originalTarget.label.replace(oldName, newName);
-	},
-	
+        var newName = this.searchService.currentEngine.name;
+        event.originalTarget.label = event.originalTarget.label.replace(oldName, newName);
+    },
+
     scroll : function(event) {
-    	for (var i = 0; i < Math.abs(event.detail); i += 3) {
-        	BrowserSearch.getSearchBar().selectEngine(event, event.detail > 0);
-		} 
+        BrowserSearch.getSearchBar().selectEngine(event, event.detail > 0);
     }
 
 };
 
-window.addEventListener('load', function(event) { ScrollSearchEngines.onLoad(event); }, false);
+window.addEventListener("load", function(event) { ScrollSearchEngines.onLoad(event); }, false);
