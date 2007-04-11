@@ -4,10 +4,11 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>scrollsearchengines@einaregilsson.com</em:id>
     <em:name>Scroll Search Engines</em:name>
-    <em:version>0.4.3</em:version>
+    <em:version>0.4.4</em:version>
     <em:creator>Einar Egilsson</em:creator>
     <em:description>Scrolls through search engines in the search bar</em:description>
     <em:homepageURL>https://addons.mozilla.org/firefox/3696/</em:homepageURL>
+    <em:iconURL>chrome://scrollsearchengines/content/scrollsearchengines.png</em:iconURL>
     <em:targetApplication>
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id> <!-- firefox -->

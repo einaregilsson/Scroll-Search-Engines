@@ -39,6 +39,7 @@
 var ScrollSearchEngines = {
 
     searchService : null,
+    searchbar : null,
 
     onLoad : function(event) {
         var searchbars = document.getElementsByTagName("searchbar");
@@ -49,11 +50,17 @@ var ScrollSearchEngines = {
         for (var i = 0; i < searchbars.length; i++) {
             searchbar = searchbars[i];
 
-            if (searchbar.id == "searchbar" && searchbar.parentNode && 
+            if (searchbar.id == "searchbar" && searchbar.parentNode &&
                 (searchbar.parentNode.id == "search-container" || searchbar.parentNode.id == "Browster-Search-Container")) {
 
+                //Need to do this instead of using BrowserSearch.getSearchbar because #$%#%&# Browster
+                //messes everything up!
+                if (searchbar.parentNode.id == "search-container") {
+                    this.searchbar = searchbar;
+                }
+
                 searchbar.addEventListener("DOMMouseScroll", function (e) { ScrollSearchEngines.scroll(e); }, false);
-            }                
+            }
 
         }
 
@@ -94,7 +101,7 @@ var ScrollSearchEngines = {
     },
 
     scroll : function(event) {
-        BrowserSearch.getSearchBar().selectEngine(event, event.detail > 0);
+        this.searchbar.selectEngine(event, event.detail > 0);
     }
 
 };
