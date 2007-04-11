@@ -38,14 +38,31 @@
 
 var ScrollSearchEngines = {
 
-    onLoad : function(event) {
+ 	searchService : null,
+ 	
+ 	onLoad : function(event) {
+        var searchbar = document.getElementById('searchbar');
+        searchbar.addEventListener('DOMMouseScroll', function (e) { ScrollSearchEngines.scroll(e); }, false);
+        
+		var contextMenuItem = document.getElementById('context-searchselect');
+        contextMenuItem.addEventListener('DOMMouseScroll', function (e) { ScrollSearchEngines.scrollContextMenu(e); }, false);
 
-        var sb = document.getElementById('searchbar');
-        sb.addEventListener('DOMMouseScroll', function (e) { ScrollSearchEngines.scroll(e); }, false);
+		this.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
     },
 
+	scrollContextMenu : function(event) {
+
+    	var oldName = this.searchService.currentEngine.name;
+    	this.scroll(event);
+
+		var newName = this.searchService.currentEngine.name;
+		event.originalTarget.label = event.originalTarget.label.replace(oldName, newName);
+	},
+	
     scroll : function(event) {
-        BrowserSearch.getSearchBar().selectEngine(event, event.detail > 0);
+    	for (var i = 0; i < Math.abs(event.detail); i += 3) {
+        	BrowserSearch.getSearchBar().selectEngine(event, event.detail > 0);
+		} 
     }
 
 };
