@@ -52,6 +52,28 @@ var ScrollSearchEngines = {
         }, true);
 
         ScrollSearchEngines.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
+
+        var searchbar = document.getElementById("searchbar");
+        ScrollSearchEngines.loopScroll = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBoolPref('extensions.scrollsearchengines.loopscroll');
+
+        //Copied from the selectEngine function with added functionality to scroll in a loop
+        searchbar.scrollEngine = function(aEvent, isNextEngine) {
+            var newIndex = this.engines.indexOf(this.currentEngine);
+            newIndex += isNextEngine ? 1 : -1;
+            if (ScrollSearchEngines.loopScroll) {
+                if (newIndex == -1) {
+                    newIndex = this.engines.length-1;
+                } else if (newIndex == this.engines.length) {
+                    newIndex = 0;
+                }
+            }
+
+            if (newIndex >= 0 && newIndex < this.engines.length) {
+                this.currentEngine = this.engines[newIndex];
+            }
+            aEvent.preventDefault();
+            aEvent.stopPropagation();
+        }        
     },
 
     scrollContextMenu : function(scrollEvent) {
@@ -75,7 +97,7 @@ var ScrollSearchEngines = {
 
 
     scroll : function(scrollEvent) {
-        document.getElementById("searchbar").selectEngine(scrollEvent, scrollEvent.detail > 0);
+        document.getElementById("searchbar").scrollEngine(scrollEvent, scrollEvent.detail > 0);
     }
 
 };
