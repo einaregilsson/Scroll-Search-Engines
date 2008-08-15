@@ -1,3 +1,4 @@
+// $Id$ 
 /* ***** BEGIN LICENSE BLOCK *****
  *   Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -24,7 +25,7 @@
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * the GNU LeSSEr General Public License Version 2.1 or later (the "LGPL"),
  * in which case the provisions of the GPL or the LGPL are applicable instead
  * of those above. If you wish to allow use of your version of this file only
  * under the terms of either the GPL or the LGPL, and not to allow others to
@@ -36,31 +37,49 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var ScrollSearchEngines = {
+var SSE = {
 
+    //Members
     searchService : null,
-
+    loopScroll : false,
+    searchBar : null,
+    
+    //Initialization 
     onLoad : function(loadEvent) {
 
+        //Init members
+        SSE.searchService = Cc["@mozilla.org/browser/search-service;1"]
+                                .getService(Ci.nsIBrowserSearchService);
+        SSE.searchBar = document.getElementById("searchbar");
+        SSE.readPrefs();
+
+        
+        //Add event listeners for scrolling
         document.addEventListener("DOMMouseScroll", function (scrollEvent) {
             if (scrollEvent.target.id == "searchbar" && scrollEvent.target.selectEngine) {
-                ScrollSearchEngines.scroll(scrollEvent);
+                SSE.scroll(scrollEvent);
             } else if (scrollEvent.target.id == "context-searchselect") {
-                ScrollSearchEngines.scrollContextMenu(scrollEvent);
+                SSE.scrollContextMenu(scrollEvent);
             }
 
         }, true);
 
-        ScrollSearchEngines.searchService = Cc["@mozilla.org/browser/search-service;1"].getService(Ci.nsIBrowserSearchService);
 
-        var searchbar = document.getElementById("searchbar");
-        ScrollSearchEngines.loopScroll = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService).getBoolPref('extensions.scrollsearchengines.loopscroll');
+        //Add event listeners for keyboard shortcuts
+        SSE.searchBar.addEventListener('keypress', function(event) {
+            if ((event.charCode == 107 || event.charCode == 75) && event.ctrlKey) { //k or K +ctrl
+                document.getElementById("searchbar").scrollEngine(event, !event.shiftKey);            
+            }
+        }, true);
 
-        //Copied from the selectEngine function with added functionality to scroll in a loop
-        searchbar.scrollEngine = function(aEvent, isNextEngine) {
+
+        //Add function to scroll engine to the search bar. This is
+        //mostly copied from the selectEngine function with added 
+        //functionality to scroll in a loop
+        SSE.searchBar.scrollEngine = function(aEvent, isNextEngine) {
             var newIndex = this.engines.indexOf(this.currentEngine);
             newIndex += isNextEngine ? 1 : -1;
-            if (ScrollSearchEngines.loopScroll) {
+            if (SSE.loopScroll) {
                 if (newIndex == -1) {
                     newIndex = this.engines.length-1;
                 } else if (newIndex == this.engines.length) {
@@ -75,31 +94,55 @@ var ScrollSearchEngines = {
             aEvent.stopPropagation();
         }        
     },
+    
+    //Cleanup
+    onUnload : function(unloadEvent) {
+        Cc["@mozilla.org/preferences-service;1"]
+            .getService(Ci.nsIPrefBranchInternal)
+                .removeObserver('extensions.scrollsearchengines', SSE);
+    },
+    
+    //Read the loop scroll pref setting    
+    readPrefs : function() {
+        SSE.loopScroll = Cc["@mozilla.org/preferences-service;1"]
+                             .getService(Ci.nsIPrefService)
+                                 .getBoolPref('extensions.scrollsearchengines.loopscroll');
+    },
 
+    //Observe changes in the loop scroll pref setting
+    observe : function(subject, topic, data) {
+        if (topic == 'nsPref:changed' && data == 'extensions.scrollsearchengines.loopscroll') {
+            SSE.readPrefs();
+        }
+    },
+
+    //Scroll context menu = scroll + change name of engine in the menu
     scrollContextMenu : function(scrollEvent) {
 
-        ScrollSearchEngines.scroll(scrollEvent);
+        SSE.scroll(scrollEvent);
         //This code mostly taken from the isTextSelection() function in browser.js
         var selectedText = getBrowserSelection(16);
-        if (!selectedText)
+        if (!selectedText) {
             return;
+        }
 
-        if (selectedText.length > 15)
+        if (selectedText.length > 15) {
             selectedText = selectedText.substr(0,15) + "...";
+        }
 
-        var engineName = this.searchService.currentEngine.name;
+        var engineName = SSE.searchService.currentEngine.name;
 
         // format "Search <engine> for <selection>" string to show in menu
         scrollEvent.target.label = gNavigatorBundle.getFormattedString("contextMenuSearchText",
-                                                          [engineName,
-                                                           selectedText]);
+                                                          [engineName, selectedText]);
     },
 
-
+    //Scroll search engines...
     scroll : function(scrollEvent) {
         document.getElementById("searchbar").scrollEngine(scrollEvent, scrollEvent.detail > 0);
     }
 
 };
 
-window.addEventListener("load", ScrollSearchEngines.onLoad, false);
+window.addEventListener("load", SSE.onLoad, false);
+window.addEventListener("unload", SSE.onUnload, false);

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- $Id$ -->
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -9,10 +10,11 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="scrollsearchengines@einaregilsson.com"
                    em:name="Scroll Search Engines"
-                   em:version="1.0"
+                   em:version="1.0.1"
                    em:creator="Einar Egilsson"
                    em:description="Scrolls through search engines in the search bar"
                    em:homepageURL="https://addons.mozilla.org/addon/3696/"
+                   em:optionsURL="chrome://scrollsearchengines/content/preferences.xul"
                    em:iconURL="chrome://scrollsearchengines/content/scrollsearchengines.png">
     <em:targetApplication RDF:resource="rdf:#$Yrk2H"/>
   </RDF:Description>

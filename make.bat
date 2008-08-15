@@ -1,4 +1,4 @@
-::
+:: $Id$
 :: Build script for extension
 :: 
 :: Einar Þór Egilsson - 26.10.2006
