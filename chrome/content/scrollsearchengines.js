@@ -92,7 +92,12 @@ var SSE = {
             }
             aEvent.preventDefault();
             aEvent.stopPropagation();
-        }        
+        }  
+        
+        Cc["@mozilla.org/preferences-service;1"]
+            .getService(Ci.nsIPrefBranchInternal)
+                .addObserver('extensions.scrollsearchengines', SSE, false);
+        
     },
     
     //Cleanup
