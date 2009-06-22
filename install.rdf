@@ -6,14 +6,14 @@
   <RDF:Description RDF:about="rdf:#$Yrk2H"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="3.0"
-                   em:maxVersion="3.0.*" />
+                   em:maxVersion="3.5.*" />
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="scrollsearchengines@einaregilsson.com"
                    em:name="Scroll Search Engines"
                    em:version="1.0.1"
                    em:creator="Einar Egilsson"
                    em:description="Scrolls through search engines in the search bar"
-                   em:homepageURL="https://addons.mozilla.org/addon/3696/"
+                   em:homepageURL="http://tech.einaregilsson.com/projects/scroll-search-engines/"
                    em:optionsURL="chrome://scrollsearchengines/content/preferences.xul"
                    em:iconURL="chrome://scrollsearchengines/content/scrollsearchengines.png">
     <em:targetApplication RDF:resource="rdf:#$Yrk2H"/>
