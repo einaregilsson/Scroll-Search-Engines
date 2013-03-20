@@ -138,9 +138,17 @@ var SSE = {
         var engineName = SSE.searchService.currentEngine.name;
 
         // format "Search <engine> for <selection>" string to show in menu
-        scrollEvent.target.label = gNavigatorBundle.getFormattedString("contextMenuSearchText",
-                                                          [engineName, selectedText]);
-    },
+		var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+        var versionChecker = Components.classes["@mozilla.org/xpcom/version-comparator;1"].getService(Components.interfaces.nsIVersionComparator);
+        var stringId;
+		if(versionChecker.compare(appInfo.version, "19") >= 0) {
+			// running under Firefox 19 or later
+			stringId = "contextMenuSearch";
+        } else {
+			stringId = "contextMenuSearchText";
+        }    
+		scrollEvent.target.label = gNavigatorBundle.getFormattedString(stringId, [engineName, selectedText])
+	},
 
     //Scroll search engines...
     scroll : function(scrollEvent) {
