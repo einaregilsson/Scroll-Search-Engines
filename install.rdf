@@ -11,6 +11,7 @@
                    em:id="scrollsearchengines@einaregilsson.com"
                    em:name="Scroll Search Engines"
                    em:version="1.0.3"
+				   em:type="2"
                    em:creator="Einar Egilsson"
 				   em:contributor="Sascha Glade"
                    em:description="Scrolls through search engines in the search bar"
