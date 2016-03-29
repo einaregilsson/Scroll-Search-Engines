@@ -1,4 +1,0 @@
-# $Id$
-content	scrollsearchengines	file:chrome/content/
-locale	scrollsearchengines	en-US	file:chrome/locale/en-US/
-overlay	chrome://browser/content/browser.xul	chrome://scrollsearchengines/content/scrollsearchengines.xul

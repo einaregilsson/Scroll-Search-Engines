@@ -1,0 +1,22 @@
+{
+  "title": "Scroll Search Engines",
+  "name": "scroll-search-engines",
+  "id" : "scrollsearchengines@einaregilsson.com",
+  "version": "1.1.0",
+  "description": "Change your selected search engine in the search bar by scrolling your mouse.",
+  "main": "scrollsearchengines.js",
+  "author": "Einar Egilsson",
+  "engines": {
+    "firefox": ">=43.0"
+  },
+  "license": "MIT",
+  "permissions": {"private-browsing": true},
+  "preferences": [{
+    "name": "loopScroll",
+    "title": "Scroll in a loop",
+    "description": "Scroll to the first search engine if you scroll down on the last search engine",
+    "type": "bool",
+    "value": false
+    }
+  ]
+}
