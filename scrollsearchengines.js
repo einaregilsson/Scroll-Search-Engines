@@ -1,10 +1,11 @@
 var winUtils = require('sdk/window/utils');
 var windows = require("sdk/windows").browserWindows;
-var prefs = require("sdk/simple-prefs").prefs;
+var prefBranch = require("sdk/simple-prefs");
+var prefs = prefBranch.prefs;
 
-windows.on('open', function(w) {
-	setupScrollHandler();
-});
+function devLog(msg) {
+	//console.log(msg);
+}
 
 exports.onUnload = function (reason) {
     for (let window of winUtils.windows('navigator:browser', {includePrivate:true})) {
@@ -12,19 +13,23 @@ exports.onUnload = function (reason) {
         if (searchbar && searchbar.scrollEngine) {
 			window.document.removeEventListener('DOMMouseScroll', scroll);
 			delete searchbar.scrollEngine;        
-			delete searchbar._iconImage;
+			
+			if (searchbar.sseIcon) {
+				searchbar.sseIcon.parentNode.removeChild(searchbar.sseIcon);
+				delete searchbar.sseIcon;
+			}
 			searchbar.removeEventListener('keypress', searchbarKeypress);    
-			console.log('Removed scroll handler');
+			devLog('Removed scroll handler');
         }
     }
 };
 
 function scroll(scrollEvent) {
     if (scrollEvent.target.id == "searchbar" && scrollEvent.target.selectEngine) {
-    	console.log('Scroll searchbar');
+    	devLog('Scroll searchbar');
     	scrollEvent.target.scrollEngine(scrollEvent, scrollEvent.detail > 0);
     } else if (scrollEvent.target.id == "context-searchselect") {
-    	console.log('Scroll context');
+    	devLog('Scroll context');
     	scrollContextMenu(scrollEvent);
     }
 }
@@ -63,10 +68,13 @@ function setupScrollHandler() {
     for (let window of winUtils.windows('navigator:browser', {includePrivate:true})) {
         var searchbar = window.document.getElementById("searchbar");
         //Add event listeners for scrolling
-        if (searchbar && !searchbar.scrollEngine) {
+        if (!searchbar) {
+        	continue;
+        }
+        if (!searchbar.scrollEngine) {
 	        window.document.addEventListener("DOMMouseScroll", scroll, true);
 	        searchbar.addEventListener('keypress', searchbarKeypress);
-	        console.log('Added scroll handler');
+	        devLog('Added scroll handler');
 			
 			//Add function to scroll engine to the search bar. This is
 			//mostly copied from the selectEngine function with added 
@@ -85,12 +93,17 @@ function setupScrollHandler() {
 			    if (newIndex >= 0 && newIndex < this.engines.length) {
 			        this.currentEngine = this.engines[newIndex];
 			    }
-			    console.log('Current engine is ' + this.currentEngine.name);
+			    devLog('Current engine is ' + this.currentEngine.name);
 			    aEvent.preventDefault();
 			    aEvent.stopPropagation();
-				searchbar._iconImage.style.backgroundImage = 'url(' + searchbar.currentEngine.iconURI.spec + ')';
+			    if (searchbar.sseIcon) {
+					searchbar.sseIcon.style.backgroundImage = 'url(' + searchbar.currentEngine.iconURI.spec + ')';
+			    }
 			} 
+        }
 
+        //Add icon if it's in the prefs and not added already
+        if (!searchbar.sseIcon && prefs.addIcon) {
 			//Lets create the stupid image! Maybe need something other than 16px in some cases...?
 			var image = window.document.createElement('xul:image');
 			image.style.width = '16px';
@@ -102,9 +115,19 @@ function setupScrollHandler() {
 			
 			var searchImage = window.document.getAnonymousElementByAttribute(searchbar, 'class', 'searchbar-search-button')
 			searchImage.parentNode.appendChild(image);
-       		searchbar._iconImage = image;
+       		searchbar.sseIcon = image;
+        }
+
+        //Remove icon if someone has just changed the prefs and wants it gone
+        if (searchbar.sseIcon && !prefs.addIcon) {
+			searchbar.sseIcon.parentNode.removeChild(searchbar.sseIcon);
+			delete searchbar.sseIcon;
         }
     }
 }
 
 setupScrollHandler();
+
+windows.on('open', setupScrollHandler);
+prefBranch.on('addIcon', setupScrollHandler)
+
