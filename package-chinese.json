@@ -1,0 +1,29 @@
+{
+  "title": "Scroll Search Engines",
+  "name": "scroll-search-engines",
+  "id" : "scrollsearchengines@einaregilsson.com",
+  "version": "1.1.1",
+  "description": "Change your selected search engine in the search bar by scrolling your mouse.",
+  "main": "scrollsearchengines.js",
+  "author": "Einar Egilsson",
+  "engines": {
+    "firefox": ">=43.0"
+  },
+  "license": "MIT",
+  "permissions": {"private-browsing": true},
+  "preferences": [{
+    "name": "loopScroll",
+    "title": "循环滚动",
+    "description": "如果你在最后一个搜索引擎上向下滚动将会滚动到至第一个搜索引擎",
+    "type": "bool",
+    "value": false
+  },
+  {
+    "name": "addIcon",
+    "title": "添加图标到搜索栏",
+    "description": "添加搜索引擎图标到搜索栏，用以显示已选择的搜索引擎",
+    "type": "bool",
+    "value": true
+    }    
+  ]
+}
