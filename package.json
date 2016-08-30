@@ -2,7 +2,7 @@
   "title": "Scroll Search Engines",
   "name": "scroll-search-engines",
   "id" : "scrollsearchengines@einaregilsson.com",
-  "version": "1.2",
+  "version": "1.2.0",
   "description": "Change your selected search engine in the search bar by scrolling your mouse.",
   "main": "scrollsearchengines.js",
   "author": "Einar Egilsson",
