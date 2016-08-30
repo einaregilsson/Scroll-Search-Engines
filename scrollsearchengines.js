@@ -11,7 +11,7 @@ exports.onUnload = function (reason) {
     for (let window of winUtils.windows('navigator:browser', {includePrivate:true})) {
         var searchbar = window.document.getElementById("searchbar");
         if (searchbar && searchbar.scrollEngine) {
-			window.document.removeEventListener('DOMMouseScroll', scroll);
+			window.document.removeEventListener('wheel', scroll);
 			delete searchbar.scrollEngine;        
 			
 			if (searchbar.sseIcon) {
@@ -27,7 +27,7 @@ exports.onUnload = function (reason) {
 function scroll(scrollEvent) {
     if (scrollEvent.target.id == "searchbar" && scrollEvent.target.selectEngine) {
     	devLog('Scroll searchbar');
-    	scrollEvent.target.scrollEngine(scrollEvent, scrollEvent.detail > 0);
+    	scrollEvent.target.scrollEngine(scrollEvent, scrollEvent.deltaY > 0);
     } else if (scrollEvent.target.id == "context-searchselect") {
     	devLog('Scroll context');
     	scrollContextMenu(scrollEvent);
@@ -58,7 +58,7 @@ function scrollContextMenu(scrollEvent) {
 		return;
 	}
 	var oldEngine = searchbar.currentEngine.name;
-	searchbar.scrollEngine(scrollEvent, scrollEvent.detail > 0);
+	searchbar.scrollEngine(scrollEvent, scrollEvent.deltaY > 0);
 
 	scrollEvent.target.label = scrollEvent.target.label.replace(oldEngine, searchbar.currentEngine.name);
 }
@@ -72,7 +72,7 @@ function setupScrollHandler() {
         	continue;
         }
         if (!searchbar.scrollEngine) {
-	        window.document.addEventListener("DOMMouseScroll", scroll, true);
+	        window.document.addEventListener("wheel", scroll, true);
 	        searchbar.addEventListener('keypress', searchbarKeypress);
 	        devLog('Added scroll handler');
 			
